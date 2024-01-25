@@ -55,7 +55,7 @@ const getAllUsers = async (req, res) => {
         res.status(200).json(users)
 
     } catch (error) {
-        res.status(500).json({ error: 'Failed to retrieved users' })
+        res.status(500).json({ error: 'Failed to retrieved users', error })
     }
 }
 
@@ -68,20 +68,21 @@ const getUserById = async (req, res) => {
         }
         res.status(200).json(userDetails);
     } catch (error) {
-        res.status(500).json({ error: 'Failed to retrieved user' })
+        res.status(500).json({ error: 'Failed to retrieved user', error })
     }
 }
 
-const deactivateUserAccount = async (req, res) => {
+const modifyUserAccount = async (req, res) => {
     const { userId } = req.params;
+    const {userStatus} = req.body;
     try {
-        const updatedUser = await userModel.findByIdAndUpdate(userId, req.body, { new: true })
+        const updatedUser = await userModel.findByIdAndUpdate(userId, {userStatus:userStatus}, { new: true })
         if (!updatedUser) {
             return res.status(404).json({ message: 'User not found' })
         }
         res.status(200).json(updatedUser);
     } catch (error) {
-        res.status(500).json({ error: 'Failed to update user' })
+        res.status(500).json({ error: 'Failed to update user', error })
     }
 }
 
@@ -89,5 +90,5 @@ module.exports = {
     createUser,
     getAllUsers,
     getUserById,
-    deactivateUserAccount
+    modifyUserAccount
 }
