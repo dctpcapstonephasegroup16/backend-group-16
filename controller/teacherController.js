@@ -26,18 +26,47 @@ const getTeacherById = async (req, res) => {
 }
 
 const getTeacherByUserId = async (req, res) => {
-    const userId = req.user.id;
+    const userId = req.params.userId;
     try {
-        const teacherRecords = await teacherModel.find({ user: userId }).populate(user)
+        // return teachers record based on the userId including users details without password
+        const teacherRecords = await teacherModel.find({ user: userId }).populate(
+            {
+              path: 'user',
+              select: '-password'
+                
+            }).exec();
         res.status(200).json(teacherRecords);
     } catch (error) {
         res.status(500).json({ error: 'Failed to retrieve teacher' })
     }
 }
 
+const updateTeacherDetails = async (req, res)=>{
+    const {firstName, middleName, lastName, dateOfBirth,gender, teacherId } = req.body;
+    try{
+const updatedTeacher = await teacherModel.findByIdAndUpdate(teacherId,{
+    firstName:firstName,
+    middleName:middleName,
+    lastName:lastName,
+    dateOfBirth:dateOfBirth,
+    gender:gender,
+},
+ {new: true}
+ );
+
+if(!updatedTeacher){
+    return res.status(404).json({message: 'Teacher not found'})
+}
+res.status(200).json(updatedTeacher);
+
+    }catch(error){
+        res.status(500).json({error:'Failed to modify teacher', error})
+    }
+}
 
 module.exports = {
     getAllTeachers,
     getTeacherById,
-    getTeacherByUserId
+    getTeacherByUserId,
+    updateTeacherDetails
 }

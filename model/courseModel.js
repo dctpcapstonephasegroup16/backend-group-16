@@ -1,11 +1,6 @@
 const mongoose = require('mongoose');
 
 const courseSchema = new mongoose.Schema({
-teacher:{
-    type:mongoose.Schema.Types.ObjectId,
-    ref: 'Teacher',
-    required: true
-},
     courseTittle: {
         type: String,
         required: true,
@@ -14,7 +9,11 @@ teacher:{
         type: String,
         required: true
     },
-    
+    courseStatus: {
+        type: String,
+        enum: ['ACTIVE', 'INACTIVE'],
+        default: 'ACTIVE'
+    },
     createAt:{
         type: Date,
         default: Date.now
