@@ -6,6 +6,11 @@ course:{
     ref: 'Course',
     required: true
 },
+teacher:{
+    type:mongoose.Schema.Types.ObjectId,
+    ref: 'Teacher',
+    required: true
+},
     assessmentTittle: {
         type: String,
         required: true,

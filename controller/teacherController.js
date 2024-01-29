@@ -1,4 +1,5 @@
 const express = require('express');
+
 const userModel = require('../model/userModel');
 const teacherModel = require('../model/teacherModel');
 
@@ -26,14 +27,14 @@ const getTeacherById = async (req, res) => {
 }
 
 const getTeacherByUserId = async (req, res) => {
-    const userId = req.params.userId;
+    const userId = req.userId;
     try {
         // return teachers record based on the userId including users details without password
         const teacherRecords = await teacherModel.find({ user: userId }).populate(
             {
-              path: 'user',
-              select: '-password'
-                
+                path: 'user',
+                select: '-password'
+
             }).exec();
         res.status(200).json(teacherRecords);
     } catch (error) {
@@ -41,28 +42,30 @@ const getTeacherByUserId = async (req, res) => {
     }
 }
 
-const updateTeacherDetails = async (req, res)=>{
-    const {firstName, middleName, lastName, dateOfBirth,gender, teacherId } = req.body;
-    try{
-const updatedTeacher = await teacherModel.findByIdAndUpdate(teacherId,{
-    firstName:firstName,
-    middleName:middleName,
-    lastName:lastName,
-    dateOfBirth:dateOfBirth,
-    gender:gender,
-},
- {new: true}
- );
+const updateTeacherDetails = async (req, res) => {
+    const { firstName, middleName, lastName, dateOfBirth, gender, teacherId } = req.body;
+    try {
+        const updatedTeacher = await teacherModel.findByIdAndUpdate(teacherId, {
+            firstName: firstName,
+            middleName: middleName,
+            lastName: lastName,
+            dateOfBirth: dateOfBirth,
+            gender: gender,
+        },
+            { new: true }
+        );
 
-if(!updatedTeacher){
-    return res.status(404).json({message: 'Teacher not found'})
-}
-res.status(200).json(updatedTeacher);
+        if (!updatedTeacher) {
+            return res.status(404).json({ message: 'Teacher not found' })
+        }
+        res.status(200).json(updatedTeacher);
 
-    }catch(error){
-        res.status(500).json({error:'Failed to modify teacher', error})
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to modify teacher', error })
     }
 }
+
+
 
 module.exports = {
     getAllTeachers,
