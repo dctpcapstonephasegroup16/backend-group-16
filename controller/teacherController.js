@@ -27,18 +27,16 @@ const getTeacherById = async (req, res) => {
 }
 
 const getTeacherByUserId = async (req, res) => {
-    const userId = req.userId;
+    
+    const userId = req.user.userId;
+    
     try {
         // return teachers record based on the userId including users details without password
-        const teacherRecords = await teacherModel.find({ user: userId }).populate(
-            {
-                path: 'user',
-                select: '-password'
-
-            }).exec();
+        const teacherRecords = await teacherModel.findOne({ user: userId })
         res.status(200).json(teacherRecords);
     } catch (error) {
-        res.status(500).json({ error: 'Failed to retrieve teacher' })
+        console.log(error)
+        res.status(500).json({ error: 'Server issues. to retrieve teacher' ,error})
     }
 }
 

@@ -7,9 +7,9 @@ const teacherModel = require('../model/teacherModel')
 
 const createAssessment = async (req, res) => {
     const { courseId, assessmentTittle, startTime, endTime, maximumScore, duration } = req.body
-    const userId = req.params.userId;
+    const {userId} = req.user;
     try {
-        const teacherRecords = await teacherModel.find({ user: userId })
+        const teacherRecords = await teacherModel.findOne({ user: userId })
         if (!teacherRecords) {
             return res.status(404).json({ error: 'Teacher not found' })
         }
@@ -36,7 +36,16 @@ const createAssessment = async (req, res) => {
 
 const getAllAssessments = async (req, res) => {
     try {
-        const assessmentsRetrieved = await assessmentModel.find({})
+        const assessmentsRetrieved = await assessmentModel.find()
+       .populate({
+        path: 'course',
+        select: ['courseTittle','courseCode'],
+        })
+        .populate({
+            path: 'teacher',
+            select: ['firstName','lastName'],
+            })
+       // .populate('teacher','firstName','lastname')
         if (!assessmentsRetrieved) {
             return res.status(404).json({ error: 'Assessment not found' })
         }
@@ -61,7 +70,7 @@ const getAsssessmentByCourseId = async (req, res) => {
 
 const getAsssessmentByCourseIdandSignInTeacher = async (req, res) => {
     const { courseId } = req.params
-    const userId = req.userId
+    const {userId} = req.user
     try {
 const getTeacherId = await teacherModel.findOne({user:userId})
 if(!getTeacherId){
@@ -69,8 +78,8 @@ if(!getTeacherId){
 }
 const teacherId = getTeacherId._id
 
-        const assessmentByCourseAndSignInUser = await assessmentModel.find({ course: courseId, teacher: teacherId})
-        if (!assessmentByCourseAndSignInUser) {
+        const assessmentByCourseAndSignInUser = await assessmentModel.find({course:courseId, teacher:teacherId})
+        if (assessmentByCourseAndSignInUser.length < 1 ){
             return res.status(404).json({ error: 'Assessment not found for the selected course' })
         }
         res.status(200).json(assessmentByCourseAndSignInUser)

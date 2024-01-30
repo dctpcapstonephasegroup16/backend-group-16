@@ -1,11 +1,11 @@
 const express = require('express');
 const jwt = require('jsonwebtoken')
-
+const bcrypt = require('bcrypt');
+const config = require('../config');
 const userModel = require('../model/userModel');
 const teacherModel = require('../model/teacherModel');
 const studentModel = require('../model/studentModel');
-const bcrypt = require('bcrypt');
-require('dotenv').config()
+
 const createUser = async (req, res) => {
 
     const { email, password, role, userStatus,firstName, middleName, lastName, dateOfBirth,gender,courseId } = req.body;
@@ -26,7 +26,7 @@ const createUser = async (req, res) => {
         });
         if(role == "student"){
             
-            const newStudent = await studentModel.create({user:newUser._id,courseId,firstName,middleName,lastName,gender,dateOfBirth, courseId});
+            const newStudent = await studentModel.create({user:newUser._id,course:courseId,firstName,middleName,lastName,gender,dateOfBirth, courseId});
             
             res.status(201).json({
                 user: newUser,
@@ -73,13 +73,13 @@ const getUserById = async (req, res) => {
     }
 }
 
-function generateToken(){
+function generateToken(user){
     return jwt.sign({
         user:{
             userId: user._id,
             role: user.role
         }
-    }, process.env.SECRET_TOKEN, 
+    }, config.jwtSecret, 
     {
         expiresIn: '1d'
     }
@@ -91,16 +91,26 @@ const userLogin = async (req, res) => {
     
     // Authenticate User
 try{
-    const user = await userModel.findOne(email);
+    const user = await userModel.findOne({email:email});
+    
     if(!user){
         return res.status(401).json({error:'Invalide login cedentials'})
     }
 const isMatch = await bcrypt.compare(password, user.password)
+
 if(!isMatch){
     return res.status(401).json({error: 'Ivalid credentials'})
 }
     
- const token = generateToken(user)
+const token = jwt.sign({ 
+    user: {
+         userId: user._id, role: user.role
+         } 
+        }, 
+        config.jwtSecret, {
+    expiresIn: '1d'
+  });
+ 
  res.json({token})
     
 }catch(error){
