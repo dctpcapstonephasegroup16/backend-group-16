@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const questionSchema = new mongoose.Schema({
-asssessment:{
+    assessment:{
     type:mongoose.Schema.Types.ObjectId,
     ref: 'Assessment',
     required: true
@@ -34,5 +34,5 @@ asssessment:{
 
 
 
-const Question = mongoose.model('Question', studentSchema);
+const Question = mongoose.model('Question', questionSchema);
 module.exports = Question;

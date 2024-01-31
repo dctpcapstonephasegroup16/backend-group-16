@@ -4,6 +4,7 @@ const userRoute = require('./route/userRoute');
 const teacherRoute = require('./route/teacherRoute');
 const courseRoute = require('./route/courseRoute');
 const assessmentRoute = require("./route/assessmentRoute")
+const questionRoute = require("./route/questionRoute")
  require('dotenv').config()
 const app = express()
 
@@ -17,6 +18,7 @@ app.use("/api/v1/users", userRoute);
 app.use("/api/v1/teachers", teacherRoute);
 app.use("/api/v1/courses", courseRoute)
 app.use("/api/v1/assessments", assessmentRoute)
+app.use("/api/v1/questions", questionRoute)
  // connecting to MongoDB
  connectToMongoDB();
 

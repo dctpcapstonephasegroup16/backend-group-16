@@ -7,7 +7,7 @@ const userModel = require('../model/userModel')
 const assessmentModel = require('../model/assessmentModel')
 
 const createQuestion = async (req, res) => {
-    const { assessmentId, text, options, correctAnswer, marks } = req.body
+    const { assessmentId,text,options,correctAnswer,marks } = req.body
     try {
         const assessment = await assessmentModel.findById(assessmentId)
         if (!assessment) {
@@ -20,8 +20,9 @@ const createQuestion = async (req, res) => {
             correctAnswer: correctAnswer,
             marks: marks
         })
+       
         res.status(201).json({
-            question: createQuestion,
+            question: createdQuestion,
             message: 'Question created successfully'
         })
     } catch (error) {
@@ -30,8 +31,8 @@ const createQuestion = async (req, res) => {
 
 }
 
-const getQuestionByAssessmentId = async (req, res) => {
-    const { questionId } = req.body
+const getQuestionById = async (req, res) => {
+    const { questionId } = req.params
     try {
         const avaliableQuestions = await questionModel.findById(questionId)
         if (!avaliableQuestions) {
@@ -44,7 +45,7 @@ const getQuestionByAssessmentId = async (req, res) => {
 }
 
 const getQuestionsByAssessmentId = async (req, res) => {
-    const { assessmentId } = req.body
+    const { assessmentId } = req.params
     try {
         const getquestions = await questionModel.find({ assessment: assessmentId })
         if (getquestions.lenght < 1) {
@@ -75,4 +76,11 @@ const updateQuestion = async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: 'Failed to update question', error })
     }
+}
+
+module.exports = {
+    createQuestion,
+    getQuestionsByAssessmentId,
+    getQuestionById,
+    updateQuestion
 }

@@ -7,7 +7,7 @@ router.get('/', authenticateUser,authorizeRole(["teacher"]),assesmentController.
 router.post('/', authenticateUser,authorizeRole(["teacher"]), assesmentController.createAssessment);
 //router.get('/:userId', userController.getUserById);
 router.get('/:assessmentId', authenticateUser,authorizeRole(["teacher","student","admin"]), assesmentController.getAssessmentById);
-router.get('/course/:courseId', assesmentController.getAsssessmentByCourseId)
+router.get('/course/:courseId', authenticateUser, assesmentController.getAsssessmentByCourseId)
 router.get('/user/:courseId', authenticateUser,authorizeRole(["teacher"]),assesmentController.getAsssessmentByCourseIdandSignInTeacher)
 router.put('/',authenticateUser,authorizeRole(["teacher","admin"]),assesmentController.updateAssessment)
 

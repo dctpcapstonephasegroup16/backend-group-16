@@ -7,6 +7,9 @@ const getAllTeachers = async (req, res) => {
 
     try {
         const teachers = await teacherModel.find({});
+        if(teachers.length < 1){
+            return res.status(404).json({error : 'No avaliable teachers'})
+        }
         res.status(200).json(teachers)
     } catch (error) {
         res.status(500).json({ error: 'Failed to retrieve teachers' })
