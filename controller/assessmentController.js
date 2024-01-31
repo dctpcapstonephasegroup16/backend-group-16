@@ -58,8 +58,11 @@ const getAllAssessments = async (req, res) => {
 const getAsssessmentByCourseId = async (req, res) => {
     const { courseId } = req.params
     try {
-        const assessmentByCourse = await assessmentModel.find({ course: courseId })
-        if (!assessmentByCourse) {
+        const assessmentByCourse = await assessmentModel.find({ course: courseId }).populate({
+            path: 'teacher',
+            select: ['firstName', 'lastName']
+        })
+        if (assessmentByCourse.length < 1) {
             return res.status(404).json({ error: 'Assessment not found for the selected course' })
         }
         res.status(200).json(assessmentByCourse)
