@@ -5,8 +5,10 @@ const teacherRoute = require('./route/teacherRoute');
 const courseRoute = require('./route/courseRoute');
 const assessmentRoute = require("./route/assessmentRoute")
 const questionRoute = require("./route/questionRoute")
+const cors = require('cors')
  require('dotenv').config()
 const app = express()
+app.use(cors());
 
 const PORT = process.env.PORT || 3000
 
