@@ -9,6 +9,6 @@ router.post('/', authenticateUser,authorizeRole(["teacher"]), assesmentControlle
 router.get('/:assessmentId', authenticateUser,authorizeRole(["teacher","student","admin"]), assesmentController.getAssessmentById);
 router.get('/course/:courseId', assesmentController.getAsssessmentByCourseId)
 router.get('/user/:courseId', authenticateUser,authorizeRole(["teacher"]),assesmentController.getAsssessmentByCourseIdandSignInTeacher)
-router.put('/',assesmentController.updateAssessment)
+router.put('/',authenticateUser,authorizeRole(["teacher","admin"]),assesmentController.updateAssessment)
 
 module.exports = router;
