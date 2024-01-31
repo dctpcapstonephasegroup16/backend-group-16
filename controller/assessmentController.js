@@ -81,7 +81,10 @@ const getAsssessmentByCourseIdandSignInTeacher = async (req, res) => {
         }
         const teacherId = getTeacherId._id
 
-        const assessmentByCourseAndSignInUser = await assessmentModel.find({ course: courseId, teacher: teacherId })
+        const assessmentByCourseAndSignInUser = await assessmentModel.find({ course: courseId, teacher: teacherId }).populate({
+            path: 'course',
+            select :['courseTittle','courseCode']
+        })
         if (assessmentByCourseAndSignInUser.length < 1) {
             return res.status(404).json({ error: 'Assessment not found for the selected course' })
         }
@@ -120,7 +123,15 @@ const getAssessmentById = async (req, res) => {
     const { assessmentId } = req.params
 
     try {
-        const retirevedAssessment = await assessmentModel.findById(assessmentId)
+        const retirevedAssessment = await assessmentModel.findById(assessmentId) 
+        .populate({
+            path: 'course',
+            select: ['courseTittle', 'courseCode'],
+        })
+        .populate({
+            path: 'teacher',
+            select: ['firstName', 'lastName'],
+        })
         if (!retirevedAssessment) {
             return res.status(404).json({ error: 'Assessment not found' })
         }
