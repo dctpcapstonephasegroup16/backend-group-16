@@ -91,10 +91,10 @@ const userLogin = async (req, res) => {
     
     // Authenticate User
 try{
-    const user = await userModel.findOne({email:email});
+    const user = await userModel.findOne({email:email,userStatus:'ACTIVE'});
     
     if(!user){
-        return res.status(401).json({error:'Invalide login cedentials'})
+        return res.status(401).json({error:'Invalide login cedentials or your Aaccount has been disabled'})
     }
 const isMatch = await bcrypt.compare(password, user.password)
 
