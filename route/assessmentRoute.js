@@ -3,7 +3,7 @@ const assesmentController = require('../controller/assessmentController');
 const {authenticateUser,authorizeRole} = require('../middleware/authMiddleware')
 const router = express.Router();
 
-router.get('/', authenticateUser,authorizeRole(["teacher"]),assesmentController.getAllAssessments);
+router.get('/', authenticateUser,authorizeRole(["admin"]),assesmentController.getAllAssessments);
 router.post('/', authenticateUser,authorizeRole(["teacher"]), assesmentController.createAssessment);
 //router.get('/:userId', userController.getUserById);
 router.get('/:assessmentId', authenticateUser,authorizeRole(["teacher","student","admin"]), assesmentController.getAssessmentById);

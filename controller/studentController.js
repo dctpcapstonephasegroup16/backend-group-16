@@ -27,7 +27,10 @@ const getAllStudents = async (req, res) => {
 const getStudentsById = async (req, res) => {
     const { studentId } = req.params;
     try {
-        const student = await studentModel.findById(studentId);
+        const student = await studentModel.findById(studentId).populate({
+            path: 'course',
+            select: ['courseTittle','courseCode']
+        });
         if (!student) {
             return res.status(404).json({ message: 'Student not found' });
         }
@@ -55,9 +58,10 @@ const getStudentByUserId = async (req, res) => {
 }
 
 const updateStudentDetails = async (req, res) => {
-    const { firstName, middleName, lastName, dateOfBirth, gender, studentId } = req.body;
+    const { firstName, middleName, lastName, dateOfBirth, gender, studentId,courseId } = req.body;
     try {
         const updatedStudent = await studentModel.findByIdAndUpdate(studentId, {
+            course:courseId,
             firstName: firstName,
             middleName: middleName,
             lastName: lastName,
@@ -85,6 +89,10 @@ const students = await studentModel.find({course:courseId })
 .populate({
     path: 'user',
     select: 'email'
+})
+.populate({
+    path: 'course',
+    select: ['courseTittle','courseCode']
 })
 if(students.length < 1){
     return res.status(404).json({error:'No students for the selected course'})
