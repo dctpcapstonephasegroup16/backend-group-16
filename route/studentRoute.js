@@ -4,11 +4,11 @@ const studentsController = require('../controller/studentController');
 const {authenticateUser,authorizeRole} = require('../middleware/authMiddleware')
 
 
-router.get('/', authenticateUser, authorizeRole(['admin']), studentsController.getAllStudents);
+router.get('/', authenticateUser, authorizeRole(['teacher']), studentsController.getAllStudents);
 // router.post('/', userController.createUser);
 router.get('/records', authenticateUser, authorizeRole(['student']),studentsController.getStudentByUserId);
 router.get('/:studentId',authenticateUser, authorizeRole(['admin','teacher']), studentsController.getStudentsById);
-
+router.get('/course/:courseId',authenticateUser, authorizeRole(['admin','teacher']), studentsController.getStudentByCourse);
 router.put('/',authenticateUser, authorizeRole(['admin','teacher']), studentsController.updateStudentDetails);
 
 module.exports = router;

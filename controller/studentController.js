@@ -7,7 +7,14 @@ const studentModel = require('../model/studentModel')
 const getAllStudents = async (req, res) => {
 
     try {
-        const students = await studentModel.find({});
+        const students = await studentModel.find({}).populate({
+            path: 'user',
+            select: 'email'
+        })
+        .populate({
+            path: 'course',
+            select: ['courseTittle','courseCode']
+        })
         if(students.length < 1){
             return res.status(404).json({error : 'No avaliable students'})
         }
@@ -70,11 +77,29 @@ const updateStudentDetails = async (req, res) => {
     }
 }
 
+const getStudentByCourse = async (req, res) =>{
+const {courseId} = req.params
+
+try{
+const students = await studentModel.find({course:courseId })
+.populate({
+    path: 'user',
+    select: 'email'
+})
+if(students.length < 1){
+    return res.status(404).json({error:'No students for the selected course'})
+}
+res.json(students)
+}catch(error){
+    res.status(500).json({error:'Could not retrieve student in the selected course',error})
+}
+}
 
 
 module.exports = {
     getAllStudents,
     getStudentsById,
     getStudentByUserId,
-    updateStudentDetails
+    updateStudentDetails,
+    getStudentByCourse
 }
