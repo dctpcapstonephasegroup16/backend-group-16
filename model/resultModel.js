@@ -1,14 +1,14 @@
 const mongoose = require('mongoose');
 
 const resultSchema = new mongoose.Schema({
-asssessment:{
+assessment:{
     type:mongoose.Schema.Types.ObjectId,
     ref: 'Assessment',
     required: true
 },
-user:{
+student:{
     type:mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    ref: 'Student',
     required: true
 },
     totalScore:{
@@ -16,7 +16,7 @@ user:{
         required: true
     },
     percentageScore:{
-        type: Number,
+        type: String,
         required: true
     },
     createAt:{
@@ -31,5 +31,5 @@ user:{
 
 
 
-const Result = mongoose.model('Result', studentSchema);
+const Result = mongoose.model('Result', resultSchema);
 module.exports = Result;

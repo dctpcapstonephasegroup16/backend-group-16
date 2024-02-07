@@ -2,6 +2,7 @@ const express = require('express');
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt');
 const config = require('../config');
+const sendWelcomeEmail = require('../email')
 const userModel = require('../model/userModel');
 const teacherModel = require('../model/teacherModel');
 const studentModel = require('../model/studentModel');
@@ -27,19 +28,20 @@ const createUser = async (req, res) => {
         if(role == "student"){
             
             const newStudent = await studentModel.create({user:newUser._id,course:courseId,firstName,middleName,lastName,gender,dateOfBirth, courseId});
-            
+            //sendWelcomeEmail.sendWelcomeEmail(newUser.email,password)
             res.status(201).json({
                 user: newUser,
                 student: newStudent,
-                message: 'User and Student created successfully',
+                message: 'User and Student created successfully. Student login credentials has been sent his/her email address',
             });   
         }
         if(role == "teacher"){
             const newTeacher = await teacherModel.create({ user:newUser._id,firstName,middleName,lastName,gender,dateOfBirth});
+           // sendWelcomeEmail.sendWelcomeEmail(newTeacher.email,password)
             res.status(201).json({
                 user: newUser,
                 Teacher: newTeacher,
-                message: 'User and Teacher created successfully',
+                message: 'User and Teacher created successfully. Teacher login credentials has been sent his/her email address',
             });
         }
        
@@ -131,6 +133,8 @@ const modifyUserAccount = async (req, res) => {
         res.status(500).json({ error: 'Failed to update user', error })
     }
 }
+
+
 
 module.exports = {
     createUser,

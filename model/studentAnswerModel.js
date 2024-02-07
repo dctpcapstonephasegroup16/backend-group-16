@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const studentAssessmentSchema = new mongoose.Schema({
+const studentAnswerSchema = new mongoose.Schema({
 student:{
     type:mongoose.Schema.Types.ObjectId,
     ref: 'Student',
@@ -11,22 +11,13 @@ assessment:{
     ref: 'Assessment'
     
 },
-    currentQuestionId: {
+    question: {
         type:mongoose.Schema.Types.ObjectId,
         ref: 'Question'
     },
-    answers:[{
-        questionId:{
-            type:mongoose.Schema.Types.ObjectId,
-        ref: 'Question'
-        },
+    answer: String,
         isCorrect: Boolean,
         marks:Number,
-        
-}] ,
-    startTime: Date,
-    endTime: Date,
-    
     createAt:{
         type: Date,
         default: Date.now
@@ -36,8 +27,5 @@ assessment:{
         default: Date.now
     }
 });
-
-
-
-const StudentAssessment = mongoose.model('StudentAssessment', studentAssessmentSchema);
-module.exports = StudentAssessment;
+const StudentAnswer = mongoose.model('StudentAnswer', studentAnswerSchema);
+module.exports = StudentAnswer;

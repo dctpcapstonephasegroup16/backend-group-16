@@ -36,6 +36,9 @@ const getTeacherByUserId = async (req, res) => {
     try {
         // return teachers record based on the userId including users details without password
         const teacherRecords = await teacherModel.findOne({ user: userId })
+        if(!teacherRecords){
+            return rest. status(404).json({message:'Teacher no found'})
+        }
         res.status(200).json(teacherRecords);
     } catch (error) {
         console.log(error)

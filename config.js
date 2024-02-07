@@ -4,4 +4,6 @@ const config = {
     // You can add more configuration settings as needed
 };
 
-module.exports = config;
+
+module.exports = config
+   

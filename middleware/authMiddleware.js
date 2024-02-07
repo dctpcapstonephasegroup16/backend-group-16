@@ -14,7 +14,7 @@ req.user = decoded.user
 next();
 
     }catch(error){
-        res.status(401).json({error: 'Unauthorized- Invalid token'})
+        res.status(401).json({error: 'Unauthorized- Invalid token',error})
     }
 }
 
