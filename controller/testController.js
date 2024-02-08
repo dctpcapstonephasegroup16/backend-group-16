@@ -204,9 +204,30 @@ const teacherAndAdminGetStudentResultByAssessmentId = async (req, res) => {
         res.status(500).json({error:'Oops! an error occured at the server', error})
     }
 }
+
+const studentViewAllResults = async (req, res) => {
+    const userId = req.user.userId;
+    try {
+        const student = await studentModel.findOne({ user:userId })
+        if (!student) {
+            return res.status(404).json({ message: 'Student not found' })
+        }
+        const studentId = student._id
+        console.log(studentId)
+        const studentResults = await resultModel.find({student:studentId})
+        console.log(studentResults)
+        if(!studentResults){
+            return res.status(404).json({message:'No result found for the selected assessment'})
+        }
+        res.json(studentResults)
+    }catch(error){
+        res.status(500).json({error:'Oops! an error occured at the server', error})
+    }
+}
 module.exports = {
     start,
     submit,
     getStudentResult,
-    teacherAndAdminGetStudentResultByAssessmentId
+    teacherAndAdminGetStudentResultByAssessmentId,
+    studentViewAllResults
 }

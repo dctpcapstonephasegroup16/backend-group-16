@@ -141,11 +141,30 @@ const getAssessmentById = async (req, res) => {
     }
 }
 
+const deleteAssessment = async (req, res) =>{
+    const {assessmentId} = req.params
+    
+    try{
+        const deleteAssessment = await assessmentModel.deleteOne({_id: assessmentId})
+        if (deleteAssessment.deletedCount === 0) {
+            // No record found to delete
+            return res.status(404).json({ message: 'Assessment not found' });
+        }
+    
+        // Record deleted successfully
+        res.status(200).json({ message: 'Assessment deleted successfully' });
+        
+    }catch(error){
+        res.status(500).json({error: 'Could not delete the resource'})
+    }
+    }
+    
 module.exports = {
     createAssessment,
     getAllAssessments,
     getAsssessmentByCourseId,
     updateAssessment,
     getAssessmentById,
-    getAsssessmentByCourseIdandSignInTeacher
+    getAsssessmentByCourseIdandSignInTeacher,
+    deleteAssessment
 }

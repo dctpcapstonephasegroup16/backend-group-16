@@ -8,7 +8,7 @@ router.get('/', authenticateUser,authorizeRole(["admin"]), teacherController.get
 // router.post('/', userController.createUser);
 router.get('/records', authenticateUser,authorizeRole(["teacher"]),teacherController.getTeacherByUserId);
 router.get('/:teacherId', authenticateUser,authorizeRole(["admin"]), teacherController.getTeacherById);
-
+router.delete('/:teacherId', authenticateUser,authorizeRole(["admin"]), teacherController.deleteTeacher);
 router.put('/', authenticateUser,authorizeRole(["admin"]), teacherController.updateTeacherDetails);
 
 module.exports = router;

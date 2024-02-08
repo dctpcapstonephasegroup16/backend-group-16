@@ -75,9 +75,28 @@ const updateQuestion = async (req, res) => {
     }
 }
 
+const deleteQuestion = async (req, res) =>{
+    const {questionId} = req.params
+    
+    try{
+        const deletedQuestion = await courseModel.deleteOne({_id:questionId})
+        if (deletedQuestion.deletedCount === 0) {
+            // No record found to delete
+            return res.status(404).json({ message: 'Question not found' });
+        }
+    
+        // Record deleted successfully
+        res.status(200).json({ message: 'Question deleted successfully' });
+        
+    }catch(error){
+        res.status(500).json({error: 'Could not delete the resource'})
+    }
+    }
+
 module.exports = {
     createQuestion,
     getQuestionsByAssessmentId,
     getQuestionById,
-    updateQuestion
+    updateQuestion,
+    deleteQuestion
 }

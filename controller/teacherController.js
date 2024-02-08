@@ -69,11 +69,24 @@ const updateTeacherDetails = async (req, res) => {
     }
 }
 
-
+const deleteTeacher = async (req , res) => {
+    const {teacherId} = req.params
+    try {
+        const deletedTeacher = await teacherModel.findByIdAndDelete(teacherId);
+        if (deletedTeacher) {
+            // Delete the associated user record
+            await userModel.findByIdAndDelete(deletedTeacher.user);
+            res.status(200).json({ message: 'Teacher deleted successfully' });
+        }
+    } catch (error) {
+        console.error("Error deleting student:", error);
+    }
+}
 
 module.exports = {
     getAllTeachers,
     getTeacherById,
     getTeacherByUserId,
-    updateTeacherDetails
+    updateTeacherDetails,
+    deleteTeacher
 }

@@ -68,9 +68,28 @@ const updateCourse = async (req , res) => {
     }
 }
 
+const deleteCourse = async (req, res) =>{
+    const {courseId} = req.params
+    
+    try{
+        const deleteCourse = await courseModel.deleteOne({_id: courseId})
+        if (deleteCourse.deletedCount === 0) {
+            // No record found to delete
+            return res.status(404).json({ message: 'Course not found' });
+        }
+    
+        // Record deleted successfully
+        res.status(200).json({ message: 'Course deleted successfully' });
+        
+    }catch(error){
+        res.status(500).json({error: 'Could not delete the resource'})
+    }
+    }
+
 module.exports = {
     createCourse,
     getAllCourse,
     getCourseById,
-    updateCourse
+    updateCourse,
+    deleteCourse
 }

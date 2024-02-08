@@ -8,6 +8,7 @@ router.get('/', authenticateUser, authorizeRole(['teacher','admin']), studentsCo
 // router.post('/', userController.createUser);
 router.get('/records', authenticateUser, authorizeRole(['student']),studentsController.getStudentByUserId);
 router.get('/:studentId',authenticateUser, authorizeRole(['admin','teacher']), studentsController.getStudentsById);
+router.delete('/:studentId',authenticateUser, authorizeRole(['admin','teacher']), studentsController.deleteStudent);
 router.get('/course/:courseId',authenticateUser, authorizeRole(['admin','teacher']), studentsController.getStudentByCourse);
 router.put('/',authenticateUser, authorizeRole(['admin','teacher']), studentsController.updateStudentDetails);
 
