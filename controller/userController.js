@@ -96,7 +96,7 @@ try{
     const user = await userModel.findOne({email:email,userStatus:'ACTIVE'});
     
     if(!user){
-        return res.status(401).json({error:'Invalide login cedentials or your Aaccount has been disabled'})
+        return res.status(404).json({error:'User not found'})
     }
 const isMatch = await bcrypt.compare(password, user.password)
 
@@ -134,12 +134,16 @@ const modifyUserAccount = async (req, res) => {
     }
 }
 
-
+const userLogout = async (req, res) => {
+    
+    res.status(200).json({ message: 'Logout successful'});
+};
 
 module.exports = {
     createUser,
     getAllUsers,
     getUserById,
     modifyUserAccount,
-    userLogin
+    userLogin,
+    userLogout
 }
