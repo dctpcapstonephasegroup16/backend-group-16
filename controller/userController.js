@@ -101,7 +101,7 @@ try{
 const isMatch = await bcrypt.compare(password, user.password)
 
 if(!isMatch){
-    return res.status(401).json({error: 'Ivalid credentials'})
+    return res.status(401).json({error: 'Invalid credentials'})
 }
     
 const token = jwt.sign({ 
@@ -139,11 +139,55 @@ const userLogout = async (req, res) => {
     res.status(200).json({ message: 'Logout successful'});
 };
 
+
+
+// Route for changing password
+const changePassword = async (req, res) => {
+    const { currentPassword, newPassword, confirmNewPassword } = req.body;
+    const userId = req.user.userId; 
+
+    try {
+        // Fetch user from the database
+        const user = await userModel.findById(userId);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Verify current password
+        const passwordMatch = await bcrypt.compare(currentPassword, user.password);
+        if (!passwordMatch) {
+            return res.status(400).json({ error: 'Current password is incorrect' });
+        }
+
+        // Check if new password and confirm new password match
+        if (newPassword !== confirmNewPassword) {
+            return res.status(400).json({ error: 'New password and confirm new password do not match' });
+        }
+
+        // Hash the new password
+        //const hashedPassword = await bcrypt.hash(newPassword, 10);
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(newPassword, salt);
+        // Update user's password
+        user.password = hashedPassword;
+        await user.save();
+
+        // Respond with success message
+        return res.status(200).json({ message: 'Password changed successfully' });
+    } catch (error) {
+        
+        return res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
+
+
+
 module.exports = {
     createUser,
     getAllUsers,
     getUserById,
     modifyUserAccount,
     userLogin,
-    userLogout
+    userLogout,
+    changePassword
 }
