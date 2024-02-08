@@ -39,11 +39,13 @@ const start = async (req, res) => {
         }
 
         // Record the start time of the assessment and calculate the end time
-        const startTime = new Date();
-        const durationInMinutes = assessmentDetails.duration;
-        const durationInMiliseconds = durationInMinutes * 60000
-        const endTime = new Date(startTime.getTime() + durationInMiliseconds);
-
+        const startTime = new Date().toUTCString() //new Date();
+        
+        const duration = assessmentDetails.duration;
+        const endTime = new Date(new Date(startTime).getTime() + duration * 60000).toISOString();
+       // const durationInMiliseconds = durationInMinutes * 60000
+       // const endTime = new Date(startTime.getTime() + durationInMiliseconds);
+       
         // Store the assessment progress in the database
         const progress = new assessmentProgresstMdel({
             student: studentId,
@@ -94,9 +96,12 @@ const submit = async (req, res) => {
             return res.status(404).json({ message: 'Assessment not found' })
         }
         // Check if the assessment duration has elapsed
-        const currentTime = new Date();
-        const elapsedTime = currentTime - progress.startTime;
-        if (elapsedTime > assessmentDetails.duration * 1000) {
+        const currentTime = new Date().toISOString();
+        
+        const progressEndTime = (progress.endTime).toISOString()
+        
+        //const elapsedTime = currentTime - progress.startTime;
+        if (currentTime > progressEndTime) {
             // Assessment duration exceeded, calculate and return the total score
             const totalScore = calculateTotalScore(progress.answers);
             const percentageScores = `${(totalScore / assessmentDetails.maximumScore) * 100}%`
@@ -141,6 +146,24 @@ const submit = async (req, res) => {
     }
 }
 
+const getStudentResult = async (req, res) => {
+    const assessmentId = req.params.assessmentId;
+    const userId = req.user.userId;
+    try {
+        const student = await studentModel.findOne({ user: userId })
+        if (!student) {
+            return res.status(404).json({ message: 'Student not found' })
+        }
+        const studentId = student._id
+        const studentResult = await resultModel.findOne({assessment:assessmentId, student:studentId})
+        if(!studentResult){
+            return res.status(404).json({message:'No result found for the selected assessment'})
+        }
+        res.json(studentResult)
+    }catch(error){
+        res.status(500).json({error:'Oops! an error occured at the server', error})
+    }
+}
 // Function to calculate user's total score for all questions
 function calculateTotalScore(answers) {
     let totalScore = 0;
@@ -158,7 +181,32 @@ await resultModel.create({
     percentageScore:percentageScore
 })
 }
+
+const teacherAndAdminGetStudentResultByAssessmentId = async (req, res) => {
+    const assessmentId = req.params.assessmentId;
+    
+    try {
+       
+        const studentResultDetails = await resultModel.findOne({assessment:assessmentId})
+        .populate({
+            path : 'assessment',
+            select: 'assessmentTittle'
+        })
+        .populate({
+            path: 'student',
+            select:['firstName','lastName']
+        })
+        if(!studentResultDetails){
+            return res.status(404).json({message:'No result found for the selected assessment'})
+        }
+        res.json(studentResultDetails)
+    }catch(error){
+        res.status(500).json({error:'Oops! an error occured at the server', error})
+    }
+}
 module.exports = {
     start,
-    submit
+    submit,
+    getStudentResult,
+    teacherAndAdminGetStudentResultByAssessmentId
 }

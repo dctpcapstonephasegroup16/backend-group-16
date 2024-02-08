@@ -7,27 +7,24 @@ const userModel = require('../model/userModel')
 const assessmentModel = require('../model/assessmentModel')
 
 const createQuestion = async (req, res) => {
-    const { assessmentId,text,options,correctAnswer,marks } = req.body
-    try {
-        const assessment = await assessmentModel.findById(assessmentId)
-        if (!assessment) {
-            return res.status(404).json({ error: 'Assessment not found' })
+    //const { assessmentId,text,options,correctAnswer,marks } = req.body
+    const requestData = Array.isArray(req.body) ? req.body : [req.body];
+        //const assessment = await assessmentModel.findById(requestData.assessment)
+        const assessmentIds = [...new Set(requestData.map(q => q.assessment))];
+        const assessments = await assessmentModel.find({
+          '_id': { $in: assessmentIds }
+        });
+      
+        if (assessments.length !== assessmentIds.length) {
+          return res.status(400).json({message:'One or more assessments do not exist.'});
         }
-        const createdQuestion = await questionModel.create({
-            assessment: assessmentId,
-            text: text,
-            options: options,
-            correctAnswer: correctAnswer,
-            marks: marks
-        })
-       
-        res.status(201).json({
-            question: createdQuestion,
-            message: 'Question created successfully'
-        })
-    } catch (error) {
-        res.status(500).json({ error: 'Fialed to create question', error })
-    }
+        // Create the questions
+ try {
+          const createdQuestions = await questionModel.insertMany(requestData);
+          res.status(201).send(createdQuestions);
+        } catch (error) {
+          res.status(500).send(error.message);
+        }
 
 }
 
