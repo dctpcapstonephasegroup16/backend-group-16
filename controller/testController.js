@@ -187,7 +187,7 @@ const teacherAndAdminGetStudentResultByAssessmentId = async (req, res) => {
     
     try {
        
-        const studentResultDetails = await resultModel.findOne({assessment:assessmentId})
+        const studentResultDetails = await resultModel.find({assessment:assessmentId})
         .populate({
             path : 'assessment',
             select: 'assessmentTittle'
@@ -195,7 +195,7 @@ const teacherAndAdminGetStudentResultByAssessmentId = async (req, res) => {
         .populate({
             path: 'student',
             select:['firstName','lastName']
-        })
+        });
         if(!studentResultDetails){
             return res.status(404).json({message:'No result found for the selected assessment'})
         }
@@ -208,16 +208,30 @@ const teacherAndAdminGetStudentResultByAssessmentId = async (req, res) => {
 const studentViewAllResults = async (req, res) => {
     const userId = req.user.userId;
     try {
-        const student = await studentModel.findOne({ user:userId })
-        if (!student) {
+        const studentDetails = await studentModel.findOne({ user:userId })
+        
+        if (!studentDetails) {
             return res.status(404).json({ message: 'Student not found' })
         }
-        const studentId = student._id
+        const studentId = studentDetails._id
         console.log(studentId)
         const studentResults = await resultModel.find({student:studentId})
-        console.log(studentResults)
+        .populate({
+            path: 'assessment',
+            select: 'assessmentTittle',
+            populate: [ {
+                path: 'teacher',
+                select: ['firstName', 'lastName']
+            },
+            {
+                path: 'course',
+                select: ['courseTittle', 'courseCode']
+            }
+        ]
+        });
+       
         if(!studentResults){
-            return res.status(404).json({message:'No result found for the selected assessment'})
+            return res.status(404).json({message:'No result found'})
         }
         res.json(studentResults)
     }catch(error){
