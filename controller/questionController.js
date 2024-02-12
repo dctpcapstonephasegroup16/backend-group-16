@@ -79,7 +79,7 @@ const deleteQuestion = async (req, res) =>{
     const {questionId} = req.params
     
     try{
-        const deletedQuestion = await courseModel.deleteOne({_id:questionId})
+        const deletedQuestion = await questionModel.deleteOne({_id:questionId})
         if (deletedQuestion.deletedCount === 0) {
             // No record found to delete
             return res.status(404).json({ message: 'Question not found' });
